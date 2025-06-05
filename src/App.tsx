@@ -24,8 +24,8 @@ function App() {
   const [investmentAmount, setInvestmentAmount] = useState(100);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [editingBuyPrice, setEditingBuyPrice] = useState<string | null>(null);
-  const [editingSellPrice, setEditingSellPrice] = useState<string | null>(null);
+  const [editingBuyPrice, setEditingBuyPrice] = useState<{ value: string; idx: number } | null>(null);
+  const [editingSellPrice, setEditingSellPrice] = useState<{ value: string; idx: number } | null>(null);
 
   useEffect(() => {
     localStorage.setItem('stocks', JSON.stringify(stocks));
@@ -119,28 +119,28 @@ function App() {
     }, 0);
   };
 
-  const handlePriceChange = (value: string, isBuyPrice: boolean) => {
+  const handlePriceChange = (value: string, isBuyPrice: boolean, idx: number) => {
     // Only allow digits and decimal point
     if (!/^\d*\.?\d*$/.test(value)) return;
     
     if (isBuyPrice) {
-      setEditingBuyPrice(value);
+      setEditingBuyPrice({ value, idx });
     } else {
-      setEditingSellPrice(value);
+      setEditingSellPrice({ value, idx });
     }
   };
 
   const handlePriceBlur = (isBuyPrice: boolean, idx: number) => {
-    if (isBuyPrice && editingBuyPrice !== null) {
-      const numValue = parseFloat(editingBuyPrice);
+    if (isBuyPrice && editingBuyPrice !== null && editingBuyPrice.idx === idx) {
+      const numValue = parseFloat(editingBuyPrice.value);
       if (!isNaN(numValue)) {
         setStocks(stocks => stocks.map((stock, i) => 
           i === idx ? { ...stock, buyPrice: Number(numValue.toFixed(2)) } : stock
         ));
       }
       setEditingBuyPrice(null);
-    } else if (!isBuyPrice && editingSellPrice !== null) {
-      const numValue = parseFloat(editingSellPrice);
+    } else if (!isBuyPrice && editingSellPrice !== null && editingSellPrice.idx === idx) {
+      const numValue = parseFloat(editingSellPrice.value);
       if (!isNaN(numValue)) {
         setStocks(stocks => stocks.map((stock, i) => 
           i === idx ? { ...stock, soldPrice: Number(numValue.toFixed(2)) } : stock
@@ -214,10 +214,10 @@ function App() {
                   Buy Price: $
                   <input
                     type="text"
-                    value={editingBuyPrice !== null && idx === stocks.findIndex(s => s.symbol === stock.symbol) 
-                      ? editingBuyPrice
+                    value={editingBuyPrice !== null && editingBuyPrice.idx === idx
+                      ? editingBuyPrice.value
                       : stock.buyPrice.toFixed(2)}
-                    onChange={(e) => handlePriceChange(e.target.value, true)}
+                    onChange={(e) => handlePriceChange(e.target.value, true, idx)}
                     onBlur={() => handlePriceBlur(true, idx)}
                     className="sim-price-input"
                   />
@@ -232,10 +232,10 @@ function App() {
                     Sold at: $
                     <input
                       type="text"
-                      value={editingSellPrice !== null && idx === stocks.findIndex(s => s.symbol === stock.symbol)
-                        ? editingSellPrice
+                      value={editingSellPrice !== null && editingSellPrice.idx === idx
+                        ? editingSellPrice.value
                         : stock.soldPrice!.toFixed(2)}
-                      onChange={(e) => handlePriceChange(e.target.value, false)}
+                      onChange={(e) => handlePriceChange(e.target.value, false, idx)}
                       onBlur={() => handlePriceBlur(false, idx)}
                       className="sim-price-input"
                     />
