@@ -24,6 +24,8 @@ function App() {
   const [investmentAmount, setInvestmentAmount] = useState(100);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [editingBuyPrice, setEditingBuyPrice] = useState<number | null>(null);
+  const [editingSellPrice, setEditingSellPrice] = useState<number | null>(null);
 
   useEffect(() => {
     localStorage.setItem('stocks', JSON.stringify(stocks));
@@ -117,6 +119,32 @@ function App() {
     }, 0);
   };
 
+  const handlePriceChange = (value: string, isBuyPrice: boolean, idx: number) => {
+    // Only allow digits and decimal point
+    if (!/^\d*\.?\d*$/.test(value)) return;
+    
+    const numValue = value === '' ? 0 : parseFloat(value);
+    if (isBuyPrice) {
+      setEditingBuyPrice(numValue);
+    } else {
+      setEditingSellPrice(numValue);
+    }
+  };
+
+  const handlePriceBlur = (isBuyPrice: boolean, idx: number) => {
+    if (isBuyPrice && editingBuyPrice !== null) {
+      setStocks(stocks => stocks.map((stock, i) => 
+        i === idx ? { ...stock, buyPrice: editingBuyPrice } : stock
+      ));
+      setEditingBuyPrice(null);
+    } else if (!isBuyPrice && editingSellPrice !== null) {
+      setStocks(stocks => stocks.map((stock, i) => 
+        i === idx ? { ...stock, soldPrice: editingSellPrice } : stock
+      ));
+      setEditingSellPrice(null);
+    }
+  };
+
   return (
     <div className="sim-container">
       <h2>Trade Simulator UI</h2>
@@ -177,14 +205,36 @@ function App() {
             <div className="sim-stock-card" key={stock.symbol + idx}>
               <div>
                 <div className="sim-stock-symbol">{stock.symbol}</div>
-                <div className="sim-stock-buy">Buy Price: ${stock.buyPrice.toFixed(2)}</div>
+                <div className="sim-stock-buy">
+                  Buy Price: $
+                  <input
+                    type="text"
+                    value={editingBuyPrice !== null && idx === stocks.findIndex(s => s.symbol === stock.symbol) 
+                      ? editingBuyPrice 
+                      : stock.buyPrice.toFixed(2)}
+                    onChange={(e) => handlePriceChange(e.target.value, true, idx)}
+                    onBlur={() => handlePriceBlur(true, idx)}
+                    className="sim-price-input"
+                  />
+                </div>
                 <div className="sim-stock-investment">Investment: ${stock.investmentAmount}</div>
                 <div className="sim-stock-shares">Shares: {shares.toFixed(4)}</div>
                 <div className="sim-stock-date">Bought: {new Date(stock.buyDate).toLocaleString()}</div>
               </div>
               {stock.soldPrice !== undefined ? (
                 <div className="sim-sold">
-                  <div>Sold at: ${stock.soldPrice.toFixed(2)}</div>
+                  <div>
+                    Sold at: $
+                    <input
+                      type="text"
+                      value={editingSellPrice !== null && idx === stocks.findIndex(s => s.symbol === stock.symbol)
+                        ? editingSellPrice
+                        : stock.soldPrice!.toFixed(2)}
+                      onChange={(e) => handlePriceChange(e.target.value, false, idx)}
+                      onBlur={() => handlePriceBlur(false, idx)}
+                      className="sim-price-input"
+                    />
+                  </div>
                   <div>Sold: {new Date(stock.sellDate!).toLocaleString()}</div>
                   <div className={gainLoss >= 0 ? 'sim-gain' : 'sim-loss'}>
                     {gainLoss >= 0 ? 'Gain' : 'Loss'}: ${Math.abs(gainLoss).toFixed(2)} ({gainLossPercentage.toFixed(2)}%)

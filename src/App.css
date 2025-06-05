@@ -186,3 +186,18 @@
   gap: 8px;
   margin-top: 8px;
 }
+
+.sim-price-input {
+  width: 80px;
+  padding: 2px 4px;
+  margin-left: 4px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.sim-price-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+}
