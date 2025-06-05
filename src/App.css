@@ -1,0 +1,188 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+.sim-container {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 16px #0001;
+  padding: 2.5rem 2rem;
+  max-width: 500px;
+  margin: 2rem auto;
+  text-align: left;
+}
+.sim-container h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #23272f;
+}
+.sim-input-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.sim-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #dbe2ea;
+  font-size: 1.1rem;
+  color: #23272f;
+  background: #f7fafd;
+}
+.sim-btn {
+  background: #111827;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.sim-btn:hover {
+  background: #23272f;
+}
+.sim-stock-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.sim-stock-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f7fafd;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 1px 4px #0001;
+}
+.sim-stock-symbol {
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 0.25rem;
+}
+.sim-stock-buy {
+  font-size: 1.1rem;
+  color: #23272f;
+  margin-bottom: 0.1rem;
+}
+.sim-sold {
+  color: #1ca21c;
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-left: 1.5rem;
+}
+
+.sim-error {
+  color: #dc2626;
+  background: #fee2e2;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.sim-btn:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+.sim-input:disabled {
+  background: #e5e7eb;
+  cursor: not-allowed;
+}
+
+.sim-gain {
+  color: #22c55e;
+  font-weight: bold;
+}
+
+.sim-loss {
+  color: #ef4444;
+  font-weight: bold;
+}
+
+.sim-select {
+  padding: 8px;
+  margin: 0 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.sim-current {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.sim-total-gainloss {
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  font-size: 1.2em;
+  font-weight: bold;
+  text-align: center;
+}
+
+.sim-delete-btn {
+  background-color: #ff4444;
+  color: white;
+  margin-top: 10px;
+}
+
+.sim-delete-btn:hover {
+  background-color: #cc0000;
+}
+
+.sim-button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
