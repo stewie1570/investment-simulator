@@ -24,8 +24,8 @@ function App() {
   const [investmentAmount, setInvestmentAmount] = useState(100);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [editingBuyPrice, setEditingBuyPrice] = useState<number | null>(null);
-  const [editingSellPrice, setEditingSellPrice] = useState<number | null>(null);
+  const [editingBuyPrice, setEditingBuyPrice] = useState<string | null>(null);
+  const [editingSellPrice, setEditingSellPrice] = useState<string | null>(null);
 
   useEffect(() => {
     localStorage.setItem('stocks', JSON.stringify(stocks));
@@ -123,24 +123,29 @@ function App() {
     // Only allow digits and decimal point
     if (!/^\d*\.?\d*$/.test(value)) return;
     
-    const numValue = value === '' ? 0 : parseFloat(value);
     if (isBuyPrice) {
-      setEditingBuyPrice(numValue);
+      setEditingBuyPrice(value);
     } else {
-      setEditingSellPrice(numValue);
+      setEditingSellPrice(value);
     }
   };
 
   const handlePriceBlur = (isBuyPrice: boolean, idx: number) => {
     if (isBuyPrice && editingBuyPrice !== null) {
-      setStocks(stocks => stocks.map((stock, i) => 
-        i === idx ? { ...stock, buyPrice: editingBuyPrice } : stock
-      ));
+      const numValue = parseFloat(editingBuyPrice);
+      if (!isNaN(numValue)) {
+        setStocks(stocks => stocks.map((stock, i) => 
+          i === idx ? { ...stock, buyPrice: Number(numValue.toFixed(2)) } : stock
+        ));
+      }
       setEditingBuyPrice(null);
     } else if (!isBuyPrice && editingSellPrice !== null) {
-      setStocks(stocks => stocks.map((stock, i) => 
-        i === idx ? { ...stock, soldPrice: editingSellPrice } : stock
-      ));
+      const numValue = parseFloat(editingSellPrice);
+      if (!isNaN(numValue)) {
+        setStocks(stocks => stocks.map((stock, i) => 
+          i === idx ? { ...stock, soldPrice: Number(numValue.toFixed(2)) } : stock
+        ));
+      }
       setEditingSellPrice(null);
     }
   };
@@ -210,7 +215,7 @@ function App() {
                   <input
                     type="text"
                     value={editingBuyPrice !== null && idx === stocks.findIndex(s => s.symbol === stock.symbol) 
-                      ? editingBuyPrice 
+                      ? editingBuyPrice
                       : stock.buyPrice.toFixed(2)}
                     onChange={(e) => handlePriceChange(e.target.value, true)}
                     onBlur={() => handlePriceBlur(true, idx)}
