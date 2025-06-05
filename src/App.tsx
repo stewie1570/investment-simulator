@@ -119,7 +119,7 @@ function App() {
     }, 0);
   };
 
-  const handlePriceChange = (value: string, isBuyPrice: boolean, idx: number) => {
+  const handlePriceChange = (value: string, isBuyPrice: boolean) => {
     // Only allow digits and decimal point
     if (!/^\d*\.?\d*$/.test(value)) return;
     
@@ -212,7 +212,7 @@ function App() {
                     value={editingBuyPrice !== null && idx === stocks.findIndex(s => s.symbol === stock.symbol) 
                       ? editingBuyPrice 
                       : stock.buyPrice.toFixed(2)}
-                    onChange={(e) => handlePriceChange(e.target.value, true, idx)}
+                    onChange={(e) => handlePriceChange(e.target.value, true)}
                     onBlur={() => handlePriceBlur(true, idx)}
                     className="sim-price-input"
                   />
@@ -230,7 +230,7 @@ function App() {
                       value={editingSellPrice !== null && idx === stocks.findIndex(s => s.symbol === stock.symbol)
                         ? editingSellPrice
                         : stock.soldPrice!.toFixed(2)}
-                      onChange={(e) => handlePriceChange(e.target.value, false, idx)}
+                      onChange={(e) => handlePriceChange(e.target.value, false)}
                       onBlur={() => handlePriceBlur(false, idx)}
                       className="sim-price-input"
                     />
