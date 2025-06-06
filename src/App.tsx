@@ -18,7 +18,7 @@ function App() {
     return savedStocks ? JSON.parse(savedStocks) : [];
   });
   const [apiKey, setApiKey] = useState(() => {
-    return localStorage.getItem('alphaVantageApiKey') || '';
+    return localStorage.getItem('finnhubApiKey') || '';
   });
   const [input, setInput] = useState('');
   const [investmentAmount, setInvestmentAmount] = useState(100);
@@ -32,21 +32,21 @@ function App() {
   }, [stocks]);
 
   useEffect(() => {
-    localStorage.setItem('alphaVantageApiKey', apiKey);
+    localStorage.setItem('finnhubApiKey', apiKey);
   }, [apiKey]);
 
   const fetchStockPrice = async (symbol: string): Promise<number> => {
     if (!apiKey) {
-      throw new Error('Please enter your Alpha Vantage API key');
+      throw new Error('Please enter your Finnhub API key');
     }
     try {
       const response = await fetch(
-        `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${apiKey}`
+        `https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${apiKey}`
       );
       const data = await response.json();
       
-      if (data['Global Quote'] && data['Global Quote']['05. price']) {
-        return parseFloat(data['Global Quote']['05. price']);
+      if (data.c) {
+        return data.c; // current price
       }
       throw new Error('Invalid stock symbol or API response');
     } catch (err) {
@@ -156,7 +156,7 @@ function App() {
       <div className="sim-input-row">
         <input
           className="sim-input"
-          placeholder="ENTER ALPHA VANTAGE API KEY"
+          placeholder="ENTER FINNHUB API KEY"
           value={apiKey}
           onChange={e => setApiKey(e.target.value)}
           type="password"
