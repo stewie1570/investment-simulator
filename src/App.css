@@ -88,30 +88,43 @@
   border-radius: 16px;
   box-shadow: var(--card-shadow);
   padding: 2.5rem 2rem;
-  max-width: 500px;
+  width: 100%;
+  max-width: 1200px;
   margin: 2rem auto;
   text-align: left;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
+
 .sim-container h2 {
-  font-size: 2rem;
+  font-size: clamp(1.5rem, 4vw, 2rem);
   font-weight: 700;
   margin-bottom: 1.5rem;
   color: var(--text-primary);
 }
+
 .sim-input-row {
   display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
   margin-bottom: 2rem;
+  width: 100%;
+  box-sizing: border-box;
 }
+
 .sim-input {
   flex: 1;
+  min-width: 0;
   padding: 0.75rem 1rem;
   border-radius: 8px;
   border: 1px solid var(--border-color);
   font-size: 1.1rem;
   color: var(--text-primary);
   background: var(--input-bg);
+  width: 100%;
+  box-sizing: border-box;
 }
+
 .sim-btn {
   background: var(--button-bg);
   color: #fff;
@@ -122,24 +135,39 @@
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  width: 100%;
+  margin: 0;
+  box-sizing: border-box;
 }
 .sim-btn:hover {
   background: var(--button-hover);
 }
+
 .sim-stock-list {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.25rem;
 }
+
 .sim-stock-card {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
   background: var(--bg-secondary);
   border-radius: 12px;
   padding: 1.25rem 1.5rem;
   box-shadow: var(--card-shadow);
+  min-height: 250px;
 }
+
+.sim-stock-card > div:first-child {
+  margin-bottom: 1rem;
+}
+
 .sim-stock-symbol {
   font-size: 1.3rem;
   font-weight: 700;
@@ -147,26 +175,38 @@
   margin-bottom: 0.25rem;
   color: var(--text-primary);
 }
+
 .sim-stock-buy {
   font-size: 1.1rem;
   color: var(--text-primary);
   margin-bottom: 0.1rem;
 }
+
 .sim-stock-investment {
   color: var(--text-secondary);
 }
+
 .sim-stock-shares {
   color: var(--text-secondary);
 }
+
 .sim-stock-date {
   color: var(--text-secondary);
   font-size: 0.9rem;
 }
+
+.sim-sold, .sim-current {
+  margin-left: 0;
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+  width: 100%;
+}
+
 .sim-sold {
   color: var(--success-text);
   font-size: 1.15rem;
   font-weight: 600;
-  margin-left: 1.5rem;
 }
 
 .sim-error {
@@ -199,20 +239,23 @@
 }
 
 .sim-select {
-  padding: 8px;
-  margin: 0 8px;
+  padding: 0.75rem 1rem;
   border: 1px solid var(--border-color);
-  border-radius: 4px;
-  font-size: 16px;
+  border-radius: 8px;
+  font-size: 1.1rem;
   background: var(--input-bg);
   color: var(--text-primary);
+  min-width: 120px;
+  height: 48px;
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
 
 .sim-current {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 8px;
+  gap: 0.5rem;
 }
 
 .sim-total-gainloss {
@@ -227,20 +270,23 @@
 }
 
 .sim-delete-btn {
-  background-color: var(--delete-button-bg);
+  background: var(--delete-button-bg);
   color: white;
   margin-top: 10px;
+  min-width: 80px;
+  margin: 0;
 }
 
 .sim-delete-btn:hover {
-  background-color: var(--delete-button-hover);
+  background: var(--delete-button-hover);
 }
 
 .sim-button-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: 8px;
+  gap: 0.5rem;
+  margin-top: auto;
+  width: 100%;
 }
 
 .sim-price-input {
@@ -258,4 +304,50 @@
   outline: none;
   border-color: var(--button-bg);
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+}
+
+@media (max-width: 768px) {
+  .sim-container {
+    padding: 1.5rem 1rem;
+    margin: 1rem auto;
+  }
+
+  .sim-input-row {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .sim-input, .sim-select {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .sim-btn {
+    width: 100%;
+  }
+
+  .sim-stock-list {
+    grid-template-columns: 1fr;
+  }
+
+  .sim-stock-card {
+    padding: 1rem;
+  }
+
+  .sim-button-group {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .sim-stock-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1025px) {
+  .sim-stock-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
