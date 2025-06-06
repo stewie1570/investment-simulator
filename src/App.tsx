@@ -235,7 +235,7 @@ function App() {
                   {stock.symbol}
                   {stock.soldPrice === undefined && (
                     <span className={gainLoss >= 0 ? 'sim-gain' : 'sim-loss'} style={{ marginLeft: '10px', fontSize: '0.9em' }}>
-                      ${currentValue.toFixed(2)} ({gainLossPercentage.toFixed(2)}%)
+                      ${gainLoss.toFixed(2)} ({gainLossPercentage.toFixed(2)}%)
                     </span>
                   )}
                 </div>
