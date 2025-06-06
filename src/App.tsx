@@ -158,10 +158,6 @@ function App() {
     
     try {
       const currentPrice = await fetchStockPrice(stock.symbol);
-      const shares = stock.investmentAmount / stock.buyPrice;
-      const currentValue = shares * currentPrice;
-      const gainLoss = currentValue - stock.investmentAmount;
-      const gainLossPercentage = (gainLoss / stock.investmentAmount) * 100;
       
       // Update the stock's current value without marking it as sold
       setStocks(stocks =>
