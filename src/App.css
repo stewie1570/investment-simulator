@@ -140,8 +140,9 @@
   align-items: center;
   justify-content: center;
   white-space: nowrap;
-  min-width: 80px;
+  width: 100%;
   margin: 0;
+  box-sizing: border-box;
 }
 .sim-btn:hover {
   background: var(--button-hover);
@@ -160,6 +161,7 @@
   border-radius: 12px;
   padding: 1.25rem 1.5rem;
   box-shadow: var(--card-shadow);
+  min-height: 250px;
 }
 
 .sim-stock-card > div:first-child {
@@ -195,9 +197,10 @@
 
 .sim-sold, .sim-current {
   margin-left: 0;
-  margin-top: 1rem;
+  margin-top: auto;
   padding-top: 1rem;
   border-top: 1px solid var(--border-color);
+  width: 100%;
 }
 
 .sim-sold {
@@ -280,10 +283,10 @@
 
 .sim-button-group {
   display: flex;
+  flex-direction: column;
   gap: 0.5rem;
-  justify-content: flex-end;
-  align-items: center;
-  margin-top: 0.5rem;
+  margin-top: auto;
+  width: 100%;
 }
 
 .sim-price-input {
@@ -333,6 +336,7 @@
 
   .sim-button-group {
     flex-direction: column;
+    gap: 0.5rem;
   }
 }
 

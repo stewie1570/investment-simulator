@@ -8,6 +8,7 @@ interface Stock {
   soldPrice?: number;
   buyDate: string;
   sellDate?: string;
+  currentPrice?: number;
 }
 
 const INVESTMENT_AMOUNTS = [25, 50, 100, 200];
@@ -150,6 +151,31 @@ function App() {
     }
   };
 
+  const handleCheckPrice = async (idx: number) => {
+    const stock = stocks[idx];
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const currentPrice = await fetchStockPrice(stock.symbol);
+      const shares = stock.investmentAmount / stock.buyPrice;
+      const currentValue = shares * currentPrice;
+      const gainLoss = currentValue - stock.investmentAmount;
+      const gainLossPercentage = (gainLoss / stock.investmentAmount) * 100;
+      
+      // Update the stock's current value without marking it as sold
+      setStocks(stocks =>
+        stocks.map((s, i) =>
+          i === idx ? { ...s, currentPrice } : s
+        )
+      );
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch stock price');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="sim-container">
       <h2>Trade Simulator UI</h2>
@@ -200,16 +226,23 @@ function App() {
           const shares = stock.investmentAmount / stock.buyPrice;
           const currentValue = stock.soldPrice 
             ? shares * stock.soldPrice 
-            : shares * stock.buyPrice;
+            : shares * (stock.currentPrice || stock.buyPrice);
           const gainLoss = stock.soldPrice 
             ? currentValue - stock.investmentAmount 
-            : 0;
+            : currentValue - stock.investmentAmount;
           const gainLossPercentage = (gainLoss / stock.investmentAmount) * 100;
 
           return (
             <div className="sim-stock-card" key={stock.symbol + idx}>
               <div>
-                <div className="sim-stock-symbol">{stock.symbol}</div>
+                <div className="sim-stock-symbol">
+                  {stock.symbol}
+                  {stock.soldPrice === undefined && (
+                    <span className={gainLoss >= 0 ? 'sim-gain' : 'sim-loss'} style={{ marginLeft: '10px', fontSize: '0.9em' }}>
+                      ${currentValue.toFixed(2)} ({gainLossPercentage.toFixed(2)}%)
+                    </span>
+                  )}
+                </div>
                 <div className="sim-stock-buy">
                   Buy Price: $
                   <input
@@ -264,6 +297,13 @@ function App() {
                       disabled={isLoading}
                     >
                       {isLoading ? 'Loading...' : 'Sell'}
+                    </button>
+                    <button 
+                      className="sim-btn" 
+                      onClick={() => handleCheckPrice(idx)}
+                      disabled={isLoading}
+                    >
+                      {isLoading ? 'Loading...' : 'Check Price'}
                     </button>
                     <button 
                       className="sim-btn sim-delete-btn" 
