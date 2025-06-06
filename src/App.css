@@ -1,3 +1,45 @@
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f7fafd;
+  --text-primary: #23272f;
+  --text-secondary: #4b5563;
+  --border-color: #dbe2ea;
+  --input-bg: #f7fafd;
+  --card-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
+  --error-bg: #fee2e2;
+  --error-text: #dc2626;
+  --success-text: #22c55e;
+  --button-bg: #111827;
+  --button-hover: #23272f;
+  --delete-button-bg: #ff4444;
+  --delete-button-hover: #cc0000;
+  --disabled-bg: #9ca3af;
+  --disabled-input-bg: #e5e7eb;
+  --total-gainloss-bg: #f5f5f5;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #1a1b1e;
+    --bg-secondary: #2d2e32;
+    --text-primary: #e5e7eb;
+    --text-secondary: #9ca3af;
+    --border-color: #374151;
+    --input-bg: #2d2e32;
+    --card-shadow: 0 2px 16px rgba(0, 0, 0, 0.3);
+    --error-bg: #7f1d1d;
+    --error-text: #fca5a5;
+    --success-text: #4ade80;
+    --button-bg: #3b82f6;
+    --button-hover: #2563eb;
+    --delete-button-bg: #ef4444;
+    --delete-button-hover: #dc2626;
+    --disabled-bg: #4b5563;
+    --disabled-input-bg: #374151;
+    --total-gainloss-bg: #2d2e32;
+  }
+}
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -42,9 +84,9 @@
 }
 
 .sim-container {
-  background: #fff;
+  background: var(--bg-primary);
   border-radius: 16px;
-  box-shadow: 0 2px 16px #0001;
+  box-shadow: var(--card-shadow);
   padding: 2.5rem 2rem;
   max-width: 500px;
   margin: 2rem auto;
@@ -54,7 +96,7 @@
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 1.5rem;
-  color: #23272f;
+  color: var(--text-primary);
 }
 .sim-input-row {
   display: flex;
@@ -65,13 +107,13 @@
   flex: 1;
   padding: 0.75rem 1rem;
   border-radius: 8px;
-  border: 1px solid #dbe2ea;
+  border: 1px solid var(--border-color);
   font-size: 1.1rem;
-  color: #23272f;
-  background: #f7fafd;
+  color: var(--text-primary);
+  background: var(--input-bg);
 }
 .sim-btn {
-  background: #111827;
+  background: var(--button-bg);
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -82,7 +124,7 @@
   transition: background 0.2s;
 }
 .sim-btn:hover {
-  background: #23272f;
+  background: var(--button-hover);
 }
 .sim-stock-list {
   display: flex;
@@ -93,32 +135,43 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #f7fafd;
+  background: var(--bg-secondary);
   border-radius: 12px;
   padding: 1.25rem 1.5rem;
-  box-shadow: 0 1px 4px #0001;
+  box-shadow: var(--card-shadow);
 }
 .sim-stock-symbol {
   font-size: 1.3rem;
   font-weight: 700;
   letter-spacing: 1px;
   margin-bottom: 0.25rem;
+  color: var(--text-primary);
 }
 .sim-stock-buy {
   font-size: 1.1rem;
-  color: #23272f;
+  color: var(--text-primary);
   margin-bottom: 0.1rem;
 }
+.sim-stock-investment {
+  color: var(--text-secondary);
+}
+.sim-stock-shares {
+  color: var(--text-secondary);
+}
+.sim-stock-date {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
 .sim-sold {
-  color: #1ca21c;
+  color: var(--success-text);
   font-size: 1.15rem;
   font-weight: 600;
   margin-left: 1.5rem;
 }
 
 .sim-error {
-  color: #dc2626;
-  background: #fee2e2;
+  color: var(--error-text);
+  background: var(--error-bg);
   padding: 0.75rem 1rem;
   border-radius: 8px;
   margin-bottom: 1rem;
@@ -126,31 +179,33 @@
 }
 
 .sim-btn:disabled {
-  background: #9ca3af;
+  background: var(--disabled-bg);
   cursor: not-allowed;
 }
 
 .sim-input:disabled {
-  background: #e5e7eb;
+  background: var(--disabled-input-bg);
   cursor: not-allowed;
 }
 
 .sim-gain {
-  color: #22c55e;
+  color: var(--success-text);
   font-weight: bold;
 }
 
 .sim-loss {
-  color: #ef4444;
+  color: var(--error-text);
   font-weight: bold;
 }
 
 .sim-select {
   padding: 8px;
   margin: 0 8px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 16px;
+  background: var(--input-bg);
+  color: var(--text-primary);
 }
 
 .sim-current {
@@ -163,21 +218,22 @@
 .sim-total-gainloss {
   margin: 20px 0;
   padding: 15px;
-  background-color: #f5f5f5;
+  background-color: var(--total-gainloss-bg);
   border-radius: 8px;
   font-size: 1.2em;
   font-weight: bold;
   text-align: center;
+  color: var(--text-primary);
 }
 
 .sim-delete-btn {
-  background-color: #ff4444;
+  background-color: var(--delete-button-bg);
   color: white;
   margin-top: 10px;
 }
 
 .sim-delete-btn:hover {
-  background-color: #cc0000;
+  background-color: var(--delete-button-hover);
 }
 
 .sim-button-group {
@@ -191,13 +247,15 @@
   width: 80px;
   padding: 2px 4px;
   margin-left: 4px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   font-size: 14px;
+  background: var(--input-bg);
+  color: var(--text-primary);
 }
 
 .sim-price-input:focus {
   outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+  border-color: var(--button-bg);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
 }
