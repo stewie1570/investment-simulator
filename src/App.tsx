@@ -11,8 +11,6 @@ interface Stock {
   currentPrice?: number;
 }
 
-const INVESTMENT_AMOUNTS = [25, 50, 100, 200];
-
 function App() {
   const [stocks, setStocks] = useState<Stock[]>(() => {
     const savedStocks = localStorage.getItem('stocks');
@@ -193,16 +191,18 @@ function App() {
           onKeyDown={e => e.key === 'Enter' && handleBuy()}
           disabled={isLoading || !apiKey}
         />
-        <select
-          className="sim-select"
+        <input
+          className="sim-input"
+          type="number"
+          min={1}
+          step={1}
           value={investmentAmount}
-          onChange={e => setInvestmentAmount(Number(e.target.value))}
+          onChange={e => {
+            setInvestmentAmount(parseInt(e.target.value));
+          }}
+          placeholder="Investment Amount"
           disabled={isLoading}
-        >
-          {INVESTMENT_AMOUNTS.map(amount => (
-            <option key={amount} value={amount}>${amount}</option>
-          ))}
-        </select>
+        />
         <button 
           className="sim-btn" 
           onClick={handleBuy}
