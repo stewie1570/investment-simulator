@@ -11,6 +11,11 @@ interface Stock {
   currentPrice?: number;
 }
 
+function isAfterHours(dateString: string) {
+  const date = new Date(dateString);
+  return date.getHours() >= 16;
+}
+
 function App() {
   const [stocks, setStocks] = useState<Stock[]>(() => {
     const savedStocks = localStorage.getItem('stocks');
@@ -253,7 +258,14 @@ function App() {
                 </div>
                 <div className="sim-stock-investment">Investment: ${stock.investmentAmount}</div>
                 <div className="sim-stock-shares">Shares: {shares.toFixed(4)}</div>
-                <div className="sim-stock-date">Bought: {new Date(stock.buyDate).toLocaleString()}</div>
+                <div className="sim-stock-date">
+                  Bought: {new Date(stock.buyDate).toLocaleString()}
+                </div>
+                {isAfterHours(stock.buyDate) && (
+                  <div style={{ color: 'red', fontWeight: 'bold', marginTop: 4 }}>
+                    After Hours
+                  </div>
+                )}
               </div>
               {stock.soldPrice !== undefined ? (
                 <div className="sim-sold">
