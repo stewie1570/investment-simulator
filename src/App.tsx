@@ -11,9 +11,14 @@ interface Stock {
   currentPrice?: number;
 }
 
-function isAfterHours(dateString: string) {
+function isOutsideOfMarketHours(dateString: string) {
   const date = new Date(dateString);
-  return date.getHours() >= 16;
+  const utcHour = date.getUTCHours();
+  const utcMinute = date.getUTCMinutes();
+  const estHour = utcHour - 5;
+  const estMinute = utcMinute;
+  const minutes = estHour * 60 + estMinute;
+  return minutes < 510 || minutes >= 900;
 }
 
 function App() {
@@ -48,7 +53,7 @@ function App() {
         `https://finnhub.io/api/v1/quote?symbol=${symbol}&token=${apiKey}`
       );
       const data = await response.json();
-      
+
       if (data.c) {
         return data.c; // current price
       }
@@ -60,18 +65,18 @@ function App() {
 
   const handleBuy = async () => {
     if (!input.trim()) return;
-    
+
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const symbol = input.trim().toUpperCase();
       const currentPrice = await fetchStockPrice(symbol);
-      
+
       setStocks([
         ...stocks,
-        { 
-          symbol, 
+        {
+          symbol,
           buyPrice: currentPrice,
           investmentAmount: investmentAmount,
           buyDate: new Date().toISOString()
@@ -89,7 +94,7 @@ function App() {
     const stock = stocks[idx];
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const currentPrice = await fetchStockPrice(stock.symbol);
       setStocks(stocks =>
@@ -113,11 +118,11 @@ function App() {
   const calculateTotalGainLoss = () => {
     return stocks.reduce((total, stock) => {
       const shares = stock.investmentAmount / stock.buyPrice;
-      const currentValue = stock.soldPrice 
-        ? shares * stock.soldPrice 
+      const currentValue = stock.soldPrice
+        ? shares * stock.soldPrice
         : shares * stock.buyPrice;
-      const gainLoss = stock.soldPrice 
-        ? currentValue - stock.investmentAmount 
+      const gainLoss = stock.soldPrice
+        ? currentValue - stock.investmentAmount
         : currentValue - stock.investmentAmount;
       return total + gainLoss;
     }, 0);
@@ -126,7 +131,7 @@ function App() {
   const handlePriceChange = (value: string, isBuyPrice: boolean, idx: number) => {
     // Only allow digits and decimal point
     if (!/^\d*\.?\d*$/.test(value)) return;
-    
+
     if (isBuyPrice) {
       setEditingBuyPrice({ value, idx });
     } else {
@@ -138,7 +143,7 @@ function App() {
     if (isBuyPrice && editingBuyPrice !== null && editingBuyPrice.idx === idx) {
       const numValue = parseFloat(editingBuyPrice.value);
       if (!isNaN(numValue)) {
-        setStocks(stocks => stocks.map((stock, i) => 
+        setStocks(stocks => stocks.map((stock, i) =>
           i === idx ? { ...stock, buyPrice: Number(numValue.toFixed(2)) } : stock
         ));
       }
@@ -146,7 +151,7 @@ function App() {
     } else if (!isBuyPrice && editingSellPrice !== null && editingSellPrice.idx === idx) {
       const numValue = parseFloat(editingSellPrice.value);
       if (!isNaN(numValue)) {
-        setStocks(stocks => stocks.map((stock, i) => 
+        setStocks(stocks => stocks.map((stock, i) =>
           i === idx ? { ...stock, soldPrice: Number(numValue.toFixed(2)) } : stock
         ));
       }
@@ -158,10 +163,10 @@ function App() {
     const stock = stocks[idx];
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const currentPrice = await fetchStockPrice(stock.symbol);
-      
+
       // Update the stock's current value without marking it as sold
       setStocks(stocks =>
         stocks.map((s, i) =>
@@ -208,8 +213,8 @@ function App() {
           placeholder="Investment Amount"
           disabled={isLoading}
         />
-        <button 
-          className="sim-btn" 
+        <button
+          className="sim-btn"
           onClick={handleBuy}
           disabled={isLoading}
         >
@@ -217,7 +222,7 @@ function App() {
         </button>
       </div>
       {error && <div className="sim-error">{error}</div>}
-      
+
       <div className="sim-total-gainloss">
         Total Gain/Loss: ${calculateTotalGainLoss().toFixed(2)}
       </div>
@@ -225,11 +230,11 @@ function App() {
       <div className="sim-stock-list">
         {stocks.map((stock, idx) => {
           const shares = stock.investmentAmount / stock.buyPrice;
-          const currentValue = stock.soldPrice 
-            ? shares * stock.soldPrice 
+          const currentValue = stock.soldPrice
+            ? shares * stock.soldPrice
             : shares * (stock.currentPrice || stock.buyPrice);
-          const gainLoss = stock.soldPrice 
-            ? currentValue - stock.investmentAmount 
+          const gainLoss = stock.soldPrice
+            ? currentValue - stock.investmentAmount
             : currentValue - stock.investmentAmount;
           const gainLossPercentage = (gainLoss / stock.investmentAmount) * 100;
 
@@ -261,7 +266,7 @@ function App() {
                 <div className="sim-stock-date">
                   Bought: {new Date(stock.buyDate).toLocaleString()}
                 </div>
-                {isAfterHours(stock.buyDate) && (
+                {isOutsideOfMarketHours(stock.buyDate) && (
                   <div style={{ color: 'red', fontWeight: 'bold', marginTop: 4 }}>
                     After Hours
                   </div>
@@ -286,8 +291,8 @@ function App() {
                     {gainLoss >= 0 ? 'Gain' : 'Loss'}: ${Math.abs(gainLoss).toFixed(2)} ({gainLossPercentage.toFixed(2)}%)
                   </div>
                   <div style={{ textAlign: 'right' }}>
-                    <button 
-                      className="sim-btn sim-delete-btn" 
+                    <button
+                      className="sim-btn sim-delete-btn"
                       onClick={() => handleDelete(idx)}
                       disabled={isLoading}
                     >
@@ -299,22 +304,22 @@ function App() {
                 <div className="sim-current">
                   <div>Current Value: ${currentValue.toFixed(2)}</div>
                   <div className="sim-button-group">
-                    <button 
-                      className="sim-btn" 
+                    <button
+                      className="sim-btn"
                       onClick={() => handleSell(idx)}
                       disabled={isLoading}
                     >
                       {isLoading ? 'Loading...' : 'Sell'}
                     </button>
-                    <button 
-                      className="sim-btn" 
+                    <button
+                      className="sim-btn"
                       onClick={() => handleCheckPrice(idx)}
                       disabled={isLoading}
                     >
                       {isLoading ? 'Loading...' : 'Check Price'}
                     </button>
-                    <button 
-                      className="sim-btn sim-delete-btn" 
+                    <button
+                      className="sim-btn sim-delete-btn"
                       onClick={() => handleDelete(idx)}
                       disabled={isLoading}
                     >
