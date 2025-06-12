@@ -292,13 +292,13 @@ function App() {
                     {gainLoss >= 0 ? 'Gain' : 'Loss'}: ${Math.abs(gainLoss).toFixed(2)} ({gainLossPercentage.toFixed(2)}%)
                   </div>
                   <div style={{ textAlign: 'right' }}>
-                    <button
+                    <ConfirmedButton
                       className="sim-btn sim-delete-btn"
                       onClick={() => handleDelete(idx)}
                       disabled={isLoading}
                     >
                       Delete
-                    </button>
+                    </ConfirmedButton>
                   </div>
                 </div>
               ) : (
