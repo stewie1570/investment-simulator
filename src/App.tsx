@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import './App.css'
+import { ConfirmedButton } from './ConfirmedButton';
 
 interface Stock {
   symbol: string;
@@ -304,13 +305,13 @@ function App() {
                 <div className="sim-current">
                   <div>Current Value: ${currentValue.toFixed(2)}</div>
                   <div className="sim-button-group">
-                    <button
+                    <ConfirmedButton
                       className="sim-btn"
                       onClick={() => handleSell(idx)}
                       disabled={isLoading}
                     >
                       {isLoading ? 'Loading...' : 'Sell'}
-                    </button>
+                    </ConfirmedButton>
                     <button
                       className="sim-btn"
                       onClick={() => handleCheckPrice(idx)}
@@ -318,13 +319,13 @@ function App() {
                     >
                       {isLoading ? 'Loading...' : 'Check Price'}
                     </button>
-                    <button
+                    <ConfirmedButton
                       className="sim-btn sim-delete-btn"
                       onClick={() => handleDelete(idx)}
                       disabled={isLoading}
                     >
                       Delete
-                    </button>
+                    </ConfirmedButton>
                   </div>
                 </div>
               )}
