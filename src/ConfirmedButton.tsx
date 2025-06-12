@@ -15,7 +15,7 @@ export const ConfirmedButton: React.FC<
             return;
         }
         onClick();
-        setIsConfirming
+        setIsConfirming(false);
     };
 
     return (
