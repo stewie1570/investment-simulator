@@ -245,10 +245,11 @@ function App() {
           const currentValue = stock.soldPrice
             ? shares * stock.soldPrice
             : shares * (stock.currentPrice || stock.buyPrice);
-          const gainLoss = stock.soldPrice
+          const gainLossRaw = stock.soldPrice
             ? currentValue - stock.investmentAmount
             : currentValue - stock.investmentAmount;
-          const gainLossPercentage = (gainLoss / stock.investmentAmount) * 100;
+          const gainLoss = Math.round(gainLossRaw * 100) / 100;
+          const gainLossPercentage = Math.round((gainLoss / stock.investmentAmount) * 10000) / 100;
 
           return (
             <div className="sim-stock-card" key={stock.symbol + idx}>
