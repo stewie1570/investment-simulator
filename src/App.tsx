@@ -195,16 +195,19 @@ function App() {
           />
         </label>
       </div>
-      <div className="sim-input-row" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginBottom: '3rem' }}>
-        <input
-          className="sim-input"
-          placeholder="ENTER STOCK SYMBOL"
-          value={input}
-          onChange={e => setInput(e.target.value.toUpperCase())}
-          onKeyDown={e => e.key === 'Enter' && handleBuy()}
-          disabled={isLoading || !apiKey}
-        />
-        <label style={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.25rem', margin: 0 }}>
+      <div className="sim-input-row" style={{ display: 'flex', gap: '0.5rem', alignItems: 'right' }}>
+        <label style={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          Symbol
+          <input
+            className="sim-input"
+            placeholder="ENTER STOCK SYMBOL"
+            value={input}
+            onChange={e => setInput(e.target.value.toUpperCase())}
+            onKeyDown={e => e.key === 'Enter' && handleBuy()}
+            disabled={isLoading || !apiKey}
+          />
+        </label>
+        <label style={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           $
           <input
             className="sim-input"
@@ -220,6 +223,8 @@ function App() {
             style={{ marginLeft: 0 }}
           />
         </label>
+      </div>
+      <div className="sim-input-row" style={{ display: 'flex', gap: '0.5rem', alignItems: 'left', marginBottom: '3rem' }}>
         <button
           className="sim-btn"
           onClick={handleBuy}
