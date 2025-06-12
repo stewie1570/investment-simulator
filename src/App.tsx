@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 import { ConfirmedButton } from './ConfirmedButton';
+import { useLocalStorageState } from 'leaf-validator';
 
 interface Stock {
   symbol: string;
@@ -23,6 +24,7 @@ function isOutsideOfMarketHours(dateString: string) {
 }
 
 function App() {
+  const [runningTotal, setRunningTotal] = useLocalStorageState<number | undefined>('runningTotal');
   const [stocks, setStocks] = useState<Stock[]>(() => {
     const savedStocks = localStorage.getItem('stocks');
     return savedStocks ? JSON.parse(savedStocks) : [];
@@ -105,6 +107,8 @@ function App() {
             : s
         )
       );
+      const gainOrLoss = (currentPrice - stock.buyPrice) * (stock.investmentAmount / stock.buyPrice);
+      setRunningTotal((runningTotal || 0) + gainOrLoss);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch stock price');
     } finally {
@@ -117,7 +121,7 @@ function App() {
   };
 
   const calculateTotalGainLoss = () => {
-    return stocks.reduce((total, stock) => {
+    const result = stocks.reduce((total, stock) => {
       const shares = stock.investmentAmount / stock.buyPrice;
       const currentValue = stock.soldPrice
         ? shares * stock.soldPrice
@@ -127,6 +131,8 @@ function App() {
         : currentValue - stock.investmentAmount;
       return total + gainLoss;
     }, 0);
+
+    return Math.round(result * 100) / 100;
   };
 
   const handlePriceChange = (value: string, isBuyPrice: boolean, idx: number) => {
@@ -180,6 +186,8 @@ function App() {
       setIsLoading(false);
     }
   };
+
+  const gainLoss = calculateTotalGainLoss();
 
   return (
     <div className="sim-container">
@@ -236,8 +244,22 @@ function App() {
       {error && <div className="sim-error">{error}</div>}
 
       <div className="sim-total-gainloss">
-        Total Gain/Loss: ${calculateTotalGainLoss().toFixed(2)}
+        Board Gain/Loss:{' '}
+        <span className={gainLoss >= 0 ? 'sim-gain' : 'sim-loss'}>${gainLoss.toFixed(2)}</span>
+        {' '}-{' '}
+        Running Total:{' '}
+        <span className={(runningTotal || 0) >= 0 ? 'sim-gain' : 'sim-loss'}>${(runningTotal || 0)?.toFixed(2) || '0.00'}</span>
       </div>
+      <ConfirmedButton
+        className="sim-btn sim-reset-btn"
+        style={{ marginBottom: '2rem' }}
+        onClick={() => {
+          setRunningTotal(0);
+        }}
+        disabled={isLoading}
+      >
+        Reset Running Total
+      </ConfirmedButton>
 
       <div className="sim-stock-list">
         {stocks.map((stock, idx) => {
