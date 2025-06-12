@@ -185,15 +185,17 @@ function App() {
     <div className="sim-container">
       <h2>Trade Simulator UI</h2>
       <div className="sim-input-row">
-        <input
-          className="sim-input"
-          placeholder="ENTER FINNHUB API KEY"
-          value={apiKey}
-          onChange={e => setApiKey(e.target.value)}
-          type="password"
-        />
+        <label style={{ fontWeight: 'bold' }}>Finnhub API Key:
+          <input
+            className="sim-input"
+            placeholder="ENTER FINNHUB API KEY"
+            value={apiKey}
+            onChange={e => setApiKey(e.target.value)}
+            type="password"
+          />
+        </label>
       </div>
-      <div className="sim-input-row">
+      <div className="sim-input-row" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginBottom: '3rem' }}>
         <input
           className="sim-input"
           placeholder="ENTER STOCK SYMBOL"
@@ -202,18 +204,22 @@ function App() {
           onKeyDown={e => e.key === 'Enter' && handleBuy()}
           disabled={isLoading || !apiKey}
         />
-        <input
-          className="sim-input"
-          type="number"
-          min={1}
-          step={1}
-          value={investmentAmount}
-          onChange={e => {
-            setInvestmentAmount(parseInt(e.target.value));
-          }}
-          placeholder="Investment Amount"
-          disabled={isLoading}
-        />
+        <label style={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.25rem', margin: 0 }}>
+          $
+          <input
+            className="sim-input"
+            type="number"
+            min={1}
+            step={1}
+            value={investmentAmount}
+            onChange={e => {
+              setInvestmentAmount(parseInt(e.target.value));
+            }}
+            placeholder="Investment Amount"
+            disabled={isLoading}
+            style={{ marginLeft: 0 }}
+          />
+        </label>
         <button
           className="sim-btn"
           onClick={handleBuy}
