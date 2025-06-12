@@ -243,13 +243,32 @@ function App() {
       </div>
       {error && <div className="sim-error">{error}</div>}
 
-      <div className="sim-total-gainloss">
-        Board Gain/Loss:{' '}
-        <span className={gainLoss >= 0 ? 'sim-gain' : 'sim-loss'}>${gainLoss.toFixed(2)}</span>
-        {' '}-{' '}
-        Running Total:{' '}
-        <span className={(runningTotal || 0) >= 0 ? 'sim-gain' : 'sim-loss'}>${(runningTotal || 0)?.toFixed(2) || '0.00'}</span>
-      </div>
+      <table
+        className="sim-total-gainloss-table"
+        style={{ marginBottom: '2rem', width: '100%' }}
+      >
+        <tbody>
+          <tr>
+            <td style={{ fontWeight: 'bold' }}>Board Gain/Loss:</td>
+            <td>
+              <span className={gainLoss >= 0 ? 'sim-gain' : 'sim-loss'}
+                style={{ display: 'inline-block', textAlign: 'right', minWidth: 80 }}>
+                ${gainLoss.toFixed(2)}
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td style={{ fontWeight: 'bold' }}>Running Total:</td>
+            <td>
+              <span
+                className={(runningTotal || 0) >= 0 ? 'sim-gain' : 'sim-loss'}
+                style={{ display: 'inline-block', textAlign: 'right', minWidth: 80 }}>
+                ${(runningTotal || 0)?.toFixed(2) || '0.00'}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
       <ConfirmedButton
         className="sim-btn sim-reset-btn"
         style={{ marginBottom: '2rem' }}
