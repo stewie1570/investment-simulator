@@ -77,13 +77,13 @@ function App() {
       const currentPrice = await fetchStockPrice(symbol);
 
       setStocks([
-        ...stocks,
         {
           symbol,
           buyPrice: currentPrice,
           investmentAmount: investmentAmount,
           buyDate: new Date().toISOString()
         },
+        ...stocks
       ]);
       setInput('');
     } catch (err) {
