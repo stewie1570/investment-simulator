@@ -228,7 +228,7 @@ function App() {
             }}
             placeholder="Investment Amount"
             disabled={isLoading}
-            style={{ marginLeft: 0 }}
+            style={{ marginLeft: 0, textAlign: 'right' }}
           />
         </label>
       </div>
