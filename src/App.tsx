@@ -191,7 +191,7 @@ function App() {
 
   return (
     <div className="sim-container">
-      <h2>Trade Simulator UI</h2>
+      <h2>Trade Simulator</h2>
       <div className="sim-input-row">
         <label style={{ fontWeight: 'bold' }}>Finnhub API Key:
           <input
@@ -231,7 +231,7 @@ function App() {
             }}
             placeholder="Investment Amount"
             disabled={isLoading}
-            style={{ marginLeft: 0 }}
+            style={{ marginLeft: 0, textAlign: 'right' }}
           />
         </label>
       </div>
