@@ -202,6 +202,9 @@ function App() {
             type="password"
           />
         </label>
+        <a href="https://finnhub.io/" style={{ marginTop: '2rem' }} target="_blank" rel="noopener noreferrer">
+          Get your API key here
+        </a>
       </div>
       <div className="sim-input-row" style={{ display: 'flex', gap: '0.5rem', alignItems: 'right' }}>
         <label style={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
