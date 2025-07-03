@@ -47,42 +47,6 @@
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
-
 .sim-container {
   background: var(--bg-primary);
   border-radius: 16px;
@@ -144,6 +108,7 @@
   margin: 0;
   box-sizing: border-box;
 }
+
 .sim-btn:hover {
   background: var(--button-hover);
 }
@@ -164,7 +129,7 @@
   min-height: 250px;
 }
 
-.sim-stock-card > div:first-child {
+.sim-stock-card>div:first-child {
   margin-bottom: 1rem;
 }
 
@@ -195,7 +160,8 @@
   font-size: 0.9rem;
 }
 
-.sim-sold, .sim-current {
+.sim-sold,
+.sim-current {
   margin-left: 0;
   margin-top: auto;
   padding-top: 1rem;
@@ -317,7 +283,8 @@
     gap: 0.75rem;
   }
 
-  .sim-input, .sim-select {
+  .sim-input,
+  .sim-select {
     width: 100%;
     min-width: unset;
   }
