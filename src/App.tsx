@@ -81,7 +81,8 @@ function App() {
           symbol,
           buyPrice: currentPrice,
           investmentAmount: investmentAmount,
-          buyDate: new Date().toISOString()
+          buyDate: new Date().toISOString(),
+          currentPrice: currentPrice
         },
         ...stocks
       ]);
@@ -323,6 +324,11 @@ function App() {
                 <div className="sim-stock-date">
                   Bought: {new Date(stock.buyDate).toLocaleString()}
                 </div>
+                {stock.currentPrice && stock.soldPrice === undefined && (
+                  <div className="sim-stock-current-price">
+                    Current Price: ${stock.currentPrice.toFixed(2)}
+                  </div>
+                )}
                 {isOutsideOfMarketHours(stock.buyDate) && (
                   <div style={{ color: 'red', fontWeight: 'bold', marginTop: 4 }}>
                     After Hours
