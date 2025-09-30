@@ -1,42 +1,50 @@
 :root {
   --bg-primary: #ffffff;
-  --bg-secondary: #f7fafd;
-  --text-primary: #23272f;
-  --text-secondary: #4b5563;
-  --border-color: #dbe2ea;
-  --input-bg: #f7fafd;
-  --card-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
-  --error-bg: #fee2e2;
+  --bg-secondary: #f8fafc;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --border-color: #e2e8f0;
+  --input-bg: #ffffff;
+  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --card-hover-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  --error-bg: #fef2f2;
   --error-text: #dc2626;
-  --success-text: #22c55e;
-  --button-bg: #111827;
-  --button-hover: #23272f;
-  --delete-button-bg: #ff4444;
-  --delete-button-hover: #cc0000;
-  --disabled-bg: #9ca3af;
-  --disabled-input-bg: #e5e7eb;
-  --total-gainloss-bg: #f5f5f5;
+  --success-text: #10b981;
+  --button-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --button-hover: linear-gradient(135deg, #5568d3 0%, #63408a 100%);
+  --delete-button-bg: linear-gradient(135deg, #3b82f6 0%, #ef4444 100%);
+  --delete-button-hover: linear-gradient(135deg, #2563eb 0%, #dc2626 100%);
+  --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --success-gradient: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+  --disabled-bg: #cbd5e1;
+  --disabled-input-bg: #f1f5f9;
+  --total-gainloss-bg: #f8fafc;
+  --input-focus-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg-primary: #1a1b1e;
-    --bg-secondary: #2d2e32;
-    --text-primary: #e5e7eb;
-    --text-secondary: #9ca3af;
-    --border-color: #374151;
-    --input-bg: #2d2e32;
-    --card-shadow: 0 2px 16px rgba(0, 0, 0, 0.3);
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --border-color: #334155;
+    --input-bg: #1e293b;
+    --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    --card-hover-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
     --error-bg: #7f1d1d;
     --error-text: #fca5a5;
-    --success-text: #4ade80;
-    --button-bg: #3b82f6;
-    --button-hover: #2563eb;
-    --delete-button-bg: #ef4444;
-    --delete-button-hover: #dc2626;
-    --disabled-bg: #4b5563;
-    --disabled-input-bg: #374151;
-    --total-gainloss-bg: #2d2e32;
+    --success-text: #34d399;
+    --button-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --button-hover: linear-gradient(135deg, #7c8ff0 0%, #8a5bb5 100%);
+    --delete-button-bg: linear-gradient(135deg, #3b82f6 0%, #ef4444 100%);
+    --delete-button-hover: linear-gradient(135deg, #60a5fa 0%, #f87171 100%);
+    --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --success-gradient: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+    --disabled-bg: #475569;
+    --disabled-input-bg: #334155;
+    --total-gainloss-bg: #1e293b;
+    --input-focus-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
   }
 }
 
@@ -49,7 +57,7 @@
 
 .sim-container {
   background: var(--bg-primary);
-  border-radius: 16px;
+  border-radius: 24px;
   box-shadow: var(--card-shadow);
   padding: 2.5rem 2rem;
   width: 100%;
@@ -58,13 +66,28 @@
   text-align: left;
   box-sizing: border-box;
   overflow-x: hidden;
+  border: 1px solid var(--border-color);
+  position: relative;
 }
 
 .sim-container h2 {
-  font-size: clamp(1.5rem, 4vw, 2rem);
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-  color: var(--text-primary);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 800;
+  margin-bottom: 2rem;
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.sim-container h2::before {
+  content: '📈';
+  font-size: 1.2em;
+  -webkit-text-fill-color: initial;
 }
 
 .sim-input-row {
@@ -79,26 +102,35 @@
 .sim-input {
   flex: 1;
   min-width: 0;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
-  font-size: 1.1rem;
+  padding: 0.875rem 1.25rem;
+  border-radius: 12px;
+  border: 2px solid var(--border-color);
+  font-size: 1rem;
   color: var(--text-primary);
   background: var(--input-bg);
   width: 100%;
   box-sizing: border-box;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.sim-input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: var(--input-focus-shadow);
+  transform: translateY(-1px);
 }
 
 .sim-btn {
   background: var(--button-bg);
   color: #fff;
   border: none;
-  border-radius: 8px;
-  padding: 0.75rem 1.5rem;
-  font-size: 1.1rem;
+  border-radius: 12px;
+  padding: 0.875rem 1.5rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   height: 48px;
   display: inline-flex;
   align-items: center;
@@ -107,10 +139,36 @@
   width: 100%;
   margin: 0;
   box-sizing: border-box;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.sim-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .sim-btn:hover {
   background: var(--button-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.sim-btn:hover::before {
+  opacity: 1;
+}
+
+.sim-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
 }
 
 .sim-stock-list {
@@ -123,10 +181,36 @@
   display: flex;
   flex-direction: column;
   background: var(--bg-secondary);
-  border-radius: 12px;
-  padding: 1.25rem 1.5rem;
+  border-radius: 16px;
+  padding: 1.5rem 1.75rem;
   box-shadow: var(--card-shadow);
   min-height: 250px;
+  border: 1px solid var(--border-color);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.sim-stock-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--accent-gradient);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.sim-stock-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--card-hover-shadow);
+  border-color: rgba(102, 126, 234, 0.3);
+}
+
+.sim-stock-card:hover::before {
+  opacity: 1;
 }
 
 .sim-stock-card>div:first-child {
@@ -134,11 +218,14 @@
 }
 
 .sim-stock-symbol {
-  font-size: 1.3rem;
-  font-weight: 700;
-  letter-spacing: 1px;
-  margin-bottom: 0.25rem;
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
   color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .sim-stock-buy {
@@ -178,15 +265,26 @@
 .sim-error {
   color: var(--error-text);
   background: var(--error-bg);
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  margin-bottom: 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
   font-size: 1rem;
+  border-left: 4px solid var(--error-text);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sim-error::before {
+  content: '⚠️';
+  font-size: 1.25em;
 }
 
 .sim-btn:disabled {
   background: var(--disabled-bg);
   cursor: not-allowed;
+  animation: pulse 1.5s ease-in-out infinite;
 }
 
 .sim-input:disabled {
@@ -196,25 +294,42 @@
 
 .sim-gain {
   color: var(--success-text);
-  font-weight: bold;
+  font-weight: 700;
+  background: rgba(16, 185, 129, 0.1);
+  padding: 0.25rem 0.75rem;
+  border-radius: 8px;
+  display: inline-block;
 }
 
 .sim-loss {
   color: var(--error-text);
-  font-weight: bold;
+  font-weight: 700;
+  background: rgba(220, 38, 38, 0.1);
+  padding: 0.25rem 0.75rem;
+  border-radius: 8px;
+  display: inline-block;
 }
 
 .sim-select {
-  padding: 0.75rem 1rem;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  font-size: 1.1rem;
+  padding: 0.875rem 1.25rem;
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  font-size: 1rem;
   background: var(--input-bg);
   color: var(--text-primary);
   min-width: 120px;
   height: 48px;
   box-sizing: border-box;
   flex-shrink: 0;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.sim-select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: var(--input-focus-shadow);
 }
 
 .sim-current {
@@ -226,13 +341,15 @@
 
 .sim-total-gainloss {
   margin: 20px 0;
-  padding: 15px;
-  background-color: var(--total-gainloss-bg);
-  border-radius: 8px;
+  padding: 20px;
+  background: var(--bg-secondary);
+  border-radius: 16px;
   font-size: 1.2em;
   font-weight: bold;
   text-align: center;
   color: var(--text-primary);
+  border: 2px solid var(--border-color);
+  box-shadow: var(--card-shadow);
 }
 
 .sim-delete-btn {
@@ -241,10 +358,12 @@
   margin-top: 10px;
   min-width: 80px;
   margin: 0;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .sim-delete-btn:hover {
   background: var(--delete-button-hover);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
 }
 
 .sim-button-group {
@@ -256,20 +375,23 @@
 }
 
 .sim-price-input {
-  width: 80px;
-  padding: 2px 4px;
-  margin-left: 4px;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
+  width: 90px;
+  padding: 4px 8px;
+  margin-left: 6px;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
   font-size: 14px;
   background: var(--input-bg);
   color: var(--text-primary);
+  font-weight: 600;
+  transition: all 0.2s ease;
 }
 
 .sim-price-input:focus {
   outline: none;
-  border-color: var(--button-bg);
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+  border-color: #667eea;
+  box-shadow: var(--input-focus-shadow);
+  transform: translateY(-1px);
 }
 
 @media (max-width: 768px) {
@@ -317,4 +439,101 @@
   .sim-stock-list {
     grid-template-columns: repeat(3, 1fr);
   }
+}
+
+/* Add fade-in animation for cards */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sim-stock-card {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+/* Staggered animation for multiple cards */
+.sim-stock-card:nth-child(1) { animation-delay: 0.05s; }
+.sim-stock-card:nth-child(2) { animation-delay: 0.1s; }
+.sim-stock-card:nth-child(3) { animation-delay: 0.15s; }
+.sim-stock-card:nth-child(4) { animation-delay: 0.2s; }
+.sim-stock-card:nth-child(5) { animation-delay: 0.25s; }
+.sim-stock-card:nth-child(6) { animation-delay: 0.3s; }
+
+/* Add pulse animation for loading states */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* Improve labels */
+label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+/* Style for totals table */
+.sim-total-gainloss-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.sim-total-gainloss-table td {
+  padding: 0.75rem 1rem;
+  font-size: 1.1rem;
+}
+
+.sim-total-gainloss-table td:first-child {
+  text-align: left;
+  color: var(--text-secondary);
+}
+
+.sim-total-gainloss-table td:last-child {
+  text-align: right;
+}
+
+.sim-total-gainloss-table tr:not(:last-child) td {
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Add reset button styling */
+.sim-reset-btn {
+  background: var(--delete-button-bg);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.sim-reset-btn:hover {
+  background: var(--delete-button-hover);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+/* Add more visual polish to stock info */
+.sim-stock-buy,
+.sim-stock-investment,
+.sim-stock-shares,
+.sim-stock-date,
+.sim-stock-current-price {
+  line-height: 1.8;
+  font-size: 0.95rem;
+}
+
+.sim-stock-current-price {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed var(--border-color);
 }
