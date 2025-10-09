@@ -72,7 +72,7 @@ export default function StockCard({ stock, idx }: { stock: Stock; idx: number; }
                     <div className={gainLoss >= 0 ? 'sim-gain' : 'sim-loss'}>
                         {gainLoss >= 0 ? 'Gain' : 'Loss'}: ${Math.abs(gainLoss).toFixed(2)} ({gainLossPercentage.toFixed(2)}%)
                     </div>
-                    <div style={{ textAlign: 'right' }}>
+                    <div style={{ textAlign: 'right', marginTop: '1rem' }}>
                         <ConfirmedButton
                             className="sim-btn sim-delete-btn"
                             onClick={() => remove(idx)}
