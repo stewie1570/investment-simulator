@@ -371,7 +371,7 @@ export default function PNLFromCSV() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: '1.1rem', color: 'var(--text-primary)', fontWeight: 600 }}>
-                Profits:
+                Revenue:
               </span>
               <span style={{ fontSize: '1.1rem', color: 'var(--success-text)', fontWeight: 700 }}>
                 {formatCurrency(profits)}
@@ -379,7 +379,7 @@ export default function PNLFromCSV() {
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: '1.1rem', color: 'var(--text-primary)', fontWeight: 600 }}>
-                Losses:
+                Expense:
               </span>
               <span style={{ fontSize: '1.1rem', color: 'var(--error-text)', fontWeight: 700 }}>
                 {formatCurrency(losses)}
