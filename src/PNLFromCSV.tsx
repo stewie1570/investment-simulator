@@ -252,36 +252,6 @@ export default function PNLFromCSV() {
         )}
       </div>
 
-      {/* Transaction Type Toggles */}
-      {transactionTypes.length > 0 && (
-        <div style={{ marginBottom: '2rem' }}>
-          <h3 style={{ marginBottom: '1rem', fontSize: '1.2rem', color: 'var(--text-primary)' }}>
-            Transaction Types
-          </h3>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
-            {transactionTypes.map(type => (
-              <button
-                key={type}
-                onClick={() => toggleType(type)}
-                style={{
-                  padding: '0.5rem 1rem',
-                  borderRadius: '8px',
-                  border: '2px solid',
-                  borderColor: enabledTypes[type] ? '#667eea' : 'var(--border-color)',
-                  backgroundColor: enabledTypes[type] ? 'rgba(102, 126, 234, 0.1)' : 'var(--bg-secondary)',
-                  color: enabledTypes[type] ? '#667eea' : 'var(--text-secondary)',
-                  fontWeight: enabledTypes[type] ? 600 : 400,
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                }}
-              >
-                {type} {enabledTypes[type] ? '✓' : '✗'}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* Paginated Table */}
       {paginatedTransactions.length > 0 && (
         <>
@@ -354,6 +324,36 @@ export default function PNLFromCSV() {
             </div>
           )}
         </>
+      )}
+
+      {/* Transaction Type Toggles */}
+      {transactionTypes.length > 0 && (
+        <div style={{ marginBottom: '2rem' }}>
+          <h3 style={{ marginBottom: '1rem', fontSize: '1.2rem', color: 'var(--text-primary)' }}>
+            Transaction Types
+          </h3>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
+            {transactionTypes.map(type => (
+              <button
+                key={type}
+                onClick={() => toggleType(type)}
+                style={{
+                  padding: '0.5rem 1rem',
+                  borderRadius: '8px',
+                  border: '2px solid',
+                  borderColor: enabledTypes[type] ? '#667eea' : 'var(--border-color)',
+                  backgroundColor: enabledTypes[type] ? 'rgba(102, 126, 234, 0.1)' : 'var(--bg-secondary)',
+                  color: enabledTypes[type] ? '#667eea' : 'var(--text-secondary)',
+                  fontWeight: enabledTypes[type] ? 600 : 400,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                {type} {enabledTypes[type] ? '✓' : '✗'}
+              </button>
+            ))}
+          </div>
+        </div>
       )}
 
       {/* Totals */}
