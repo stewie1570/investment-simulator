@@ -6,7 +6,6 @@ export function parseCSV(csvText: string): CSVTransaction[] {
   const lines = normalizedText.split('\n').map(line => line.trim()).filter(line => line.length > 0);
   
   if (lines.length < 2) {
-    console.warn('CSV has less than 2 lines');
     return [];
   }
 
@@ -16,9 +15,6 @@ export function parseCSV(csvText: string): CSVTransaction[] {
     // Remove quotes, normalize whitespace, but preserve the exact header name for matching
     return h.trim().replace(/^"|"$/g, '').replace(/\s+/g, ' ');
   });
-  console.log('Parsed headers:', headers);
-  console.log('Number of header columns:', headers.length);
-  console.log('First few lines:', lines.slice(0, 3));
   
   // Create a normalized header map for flexible matching
   const headerMap = new Map<string, string>();
@@ -36,13 +32,6 @@ export function parseCSV(csvText: string): CSVTransaction[] {
     // Handle CSV with quoted fields that may contain commas
     let values = parseCSVLine(line).map(v => v.trim().replace(/^"|"$/g, ''));
     
-    // Debug first data line
-    if (i === 1) {
-      console.log(`First data line raw: "${line}"`);
-      console.log(`Parsed values (${values.length}):`, values);
-      console.log(`Headers (${headers.length}):`, headers);
-    }
-    
     // Handle trailing empty columns (some CSVs have empty columns at the end)
     // Pad with empty strings if we have fewer values than headers
     while (values.length < headers.length) {
@@ -50,15 +39,10 @@ export function parseCSV(csvText: string): CSVTransaction[] {
     }
     // Trim excess values if we have more than headers (shouldn't happen, but be safe)
     if (values.length > headers.length) {
-      console.warn(`Line ${i + 1}: More values than headers. Trimming excess. Had ${values.length}, expected ${headers.length}`);
       values = values.slice(0, headers.length);
     }
     
     if (values.length !== headers.length) {
-      console.warn(`Line ${i + 1}: Column count mismatch after normalization. Expected ${headers.length}, got ${values.length}`);
-      console.warn(`Headers: ${headers.join('|')}`);
-      console.warn(`Values: ${values.join('|')}`);
-      console.warn(`Full line: ${line}`);
       continue;
     }
 
@@ -73,24 +57,11 @@ export function parseCSV(csvText: string): CSVTransaction[] {
     const hasPostingDate = headerMap.has('posting date');
     const hasDetails = headerMap.has('details');
     
-    if (i === 1) {
-      console.log('Format detection:', {
-        hasTransactionDate,
-        hasPostDate,
-        hasPostingDate,
-        hasDetails,
-        headers,
-        headerMapKeys: Array.from(headerMap.keys())
-      });
-    }
-    
     if (hasTransactionDate && hasPostDate) {
-      console.log('Detected Credit Card format');
       // Credit Card format
       const amountStr = (row['Amount'] || '0').replace(/,/g, '').trim();
       const amount = parseFloat(amountStr);
       if (isNaN(amount)) {
-        console.warn(`Line ${i + 1}: Invalid amount "${row['Amount']}" (parsed as "${amountStr}")`);
         continue;
       }
       const date = row['Transaction Date'] || row['Post Date'] || '';
@@ -105,10 +76,7 @@ export function parseCSV(csvText: string): CSVTransaction[] {
         date,
       };
       transactions.push(transaction);
-      console.log(`Added transaction: ${transaction.description} - ${transaction.type} - ${transaction.amount}`);
     } else if (hasPostingDate && hasDetails) {
-      console.log('Detected Savings/Checking format');
-      console.log(`Line ${i + 1} row data:`, row);
       // Savings/Checking format - use headerMap to get exact header names
       const amountKey = headerMap.get('amount') || 'Amount';
       const postingDateKey = headerMap.get('posting date') || 'Posting Date';
@@ -121,7 +89,6 @@ export function parseCSV(csvText: string): CSVTransaction[] {
       const amountStr = (row[amountKey] || '0').replace(/,/g, '').trim();
       const amount = parseFloat(amountStr);
       if (isNaN(amount)) {
-        console.warn(`Line ${i + 1}: Invalid amount "${row[amountKey]}" (parsed as "${amountStr}")`);
         continue;
       }
       const date = row[postingDateKey] || '';
@@ -136,9 +103,7 @@ export function parseCSV(csvText: string): CSVTransaction[] {
         date,
       };
       transactions.push(transaction);
-      console.log(`Added transaction: ${transaction.description} - ${transaction.type} - ${transaction.amount}`);
     } else {
-      console.warn(`Line ${i + 1}: Unknown CSV format. Headers: ${headers.join(', ')}`);
       // Try to parse as generic CSV if it has Amount and Type columns
       const hasAmount = headerMap.has('amount');
       const hasType = headerMap.has('type');
@@ -156,13 +121,11 @@ export function parseCSV(csvText: string): CSVTransaction[] {
             amount,
             date: row[dateField] || '',
           });
-          console.log(`Added generic transaction: ${row[descField]} - ${row[typeKey]} - ${amount}`);
         }
       }
     }
   }
 
-  console.log(`Parsed ${transactions.length} transactions`);
   return transactions;
 }
 

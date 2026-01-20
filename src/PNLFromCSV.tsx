@@ -6,6 +6,26 @@ import type { CSVTransaction } from './types';
 
 const ITEMS_PER_PAGE = 20;
 
+// Helper functions
+const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  }).format(amount);
+};
+
+const formatDate = (dateStr: string) => {
+  if (!dateStr) return '';
+  // Try to parse common date formats
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return dateStr;
+  return date.toLocaleDateString('en-US', { 
+    year: 'numeric', 
+    month: '2-digit', 
+    day: '2-digit' 
+  });
+};
+
 export default function PNLFromCSV() {
   const [transactions, setTransactions] = useState<CSVTransaction[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -14,6 +34,7 @@ export default function PNLFromCSV() {
   const [loadedFilesCount, setLoadedFilesCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   // Get unique transaction types and initialize enabledTypes
   const transactionTypes = useMemo(() => {
@@ -58,6 +79,26 @@ export default function PNLFromCSV() {
     };
   }, [filteredTransactions]);
 
+  // Calculate date range
+  const dateRange = useMemo(() => {
+    if (filteredTransactions.length === 0) return null;
+    
+    const validDates = filteredTransactions
+      .map(t => {
+        const date = new Date(t.date);
+        return isNaN(date.getTime()) ? null : { date, original: t.date };
+      })
+      .filter((d): d is { date: Date; original: string } => d !== null)
+      .sort((a, b) => a.date.getTime() - b.date.getTime());
+    
+    if (validDates.length === 0) return null;
+    
+    return {
+      min: formatDate(validDates[0].original),
+      max: formatDate(validDates[validDates.length - 1].original),
+    };
+  }, [filteredTransactions]);
+
   // Pagination
   const totalPages = Math.ceil(filteredTransactions.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -84,12 +125,10 @@ export default function PNLFromCSV() {
           try {
             const text = e.target?.result as string;
             if (!text || text.trim().length === 0) {
-              console.warn(`File ${file.name} is empty`);
               resolve();
               return;
             }
             const parsed = parseCSV(text);
-            console.log(`Parsed ${parsed.length} transactions from ${file.name}`, parsed);
             allTransactions.push(...parsed);
             processedCount++;
             resolve();
@@ -109,7 +148,6 @@ export default function PNLFromCSV() {
 
     Promise.all(fileReaders)
       .then(() => {
-        console.log(`Total transactions parsed: ${allTransactions.length}`);
         if (allTransactions.length === 0) {
           setError('No transactions found in CSV files. Please check the file format.');
         } else {
@@ -168,23 +206,29 @@ export default function PNLFromCSV() {
     setCurrentPage(1); // Reset to first page when filtering
   };
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  };
-
-  const formatDate = (dateStr: string) => {
-    if (!dateStr) return '';
-    // Try to parse common date formats
-    const date = new Date(dateStr);
-    if (isNaN(date.getTime())) return dateStr;
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: '2-digit', 
-      day: '2-digit' 
-    });
+  const copyTotalsToClipboard = async () => {
+    // Format as tab-separated values for pasting into Excel cells (horizontal)
+    // Include date range first, then strip currency formatting and use raw numbers
+    const dateRangeStr = dateRange ? `${dateRange.min}\t${dateRange.max}\t` : '';
+    
+    // Add transaction type statuses (alphabetized)
+    const typeStatuses = transactionTypes
+      .slice()
+      .sort()
+      .map(type => {
+        const status = enabledTypes[type] !== false ? 'ON' : 'OFF';
+        return `${type}:${status}`;
+      });
+    
+    const textToCopy = `${dateRangeStr}${profits}\t${losses}\t${net}\t${typeStatuses.join('\t')}`;
+    
+    try {
+      await navigator.clipboard.writeText(textToCopy);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy to clipboard:', err);
+    }
   };
 
   return (
@@ -365,9 +409,14 @@ export default function PNLFromCSV() {
           borderRadius: '16px',
           border: '2px solid var(--border-color)',
         }}>
-          <h3 style={{ marginBottom: '1rem', fontSize: '1.3rem', color: 'var(--text-primary)' }}>
+          <h3 style={{ marginBottom: '0.5rem', fontSize: '1.3rem', color: 'var(--text-primary)' }}>
             Summary
           </h3>
+          {dateRange && (
+            <p style={{ marginBottom: '1rem', fontSize: '0.95rem', color: 'var(--text-secondary)' }}>
+              {dateRange.min} → {dateRange.max}
+            </p>
+          )}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: '1.1rem', color: 'var(--text-primary)', fontWeight: 600 }}>
@@ -405,6 +454,23 @@ export default function PNLFromCSV() {
               </span>
             </div>
           </div>
+          <button
+            onClick={copyTotalsToClipboard}
+            style={{
+              marginTop: '1rem',
+              padding: '0.75rem 1.5rem',
+              borderRadius: '8px',
+              border: '2px solid var(--border-color)',
+              backgroundColor: copied ? 'var(--success-text)' : 'var(--bg-primary)',
+              color: copied ? 'white' : 'var(--text-primary)',
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              fontSize: '0.95rem',
+            }}
+          >
+            {copied ? '✓ Copied!' : 'Copy Totals to Clipboard'}
+          </button>
         </div>
       )}
     </div>
