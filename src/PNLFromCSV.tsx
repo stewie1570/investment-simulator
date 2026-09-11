@@ -3,6 +3,7 @@ import './App.css';
 import { Link } from 'react-router-dom';
 import { parseCSV } from './csvParser';
 import type { CSVTransaction } from './types';
+import { groupTransactionsByMerchant } from './merchantGrouping';
 
 const ITEMS_PER_PAGE = 20;
 
@@ -35,6 +36,7 @@ export default function PNLFromCSV() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [groupByMerchant, setGroupByMerchant] = useState(false);
 
   // Get unique transaction types and initialize enabledTypes
   const transactionTypes = useMemo(() => {
@@ -99,11 +101,18 @@ export default function PNLFromCSV() {
     };
   }, [filteredTransactions]);
 
+  const merchantGroups = useMemo(
+    () => groupByMerchant ? groupTransactionsByMerchant(filteredTransactions) : [],
+    [filteredTransactions, groupByMerchant]
+  );
+
   // Pagination
-  const totalPages = Math.ceil(filteredTransactions.length / ITEMS_PER_PAGE);
+  const tableRowCount = groupByMerchant ? merchantGroups.length : filteredTransactions.length;
+  const totalPages = Math.ceil(tableRowCount / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const paginatedTransactions = filteredTransactions.slice(startIndex, endIndex);
+  const paginatedMerchantGroups = merchantGroups.slice(startIndex, endIndex);
 
   const processFiles = (files: File[]) => {
     const csvFiles = files.filter(f => f.name.toLowerCase().endsWith('.csv'));
@@ -245,6 +254,7 @@ export default function PNLFromCSV() {
 
       {/* File Dropzone */}
       <div
+        className="csv-dropzone"
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
@@ -297,48 +307,109 @@ export default function PNLFromCSV() {
       </div>
 
       {/* Paginated Table */}
-      {paginatedTransactions.length > 0 && (
+      {filteredTransactions.length > 0 && (
         <>
+          <div style={{ marginBottom: '1rem' }}>
+            <button
+              onClick={() => {
+                setGroupByMerchant(prev => !prev);
+                setCurrentPage(1);
+              }}
+              style={{
+                padding: '0.5rem 1rem',
+                borderRadius: '8px',
+                border: '2px solid',
+                borderColor: groupByMerchant ? '#667eea' : 'var(--border-color)',
+                backgroundColor: groupByMerchant ? 'rgba(102, 126, 234, 0.1)' : 'var(--bg-secondary)',
+                color: groupByMerchant ? '#667eea' : 'var(--text-secondary)',
+                fontWeight: groupByMerchant ? 600 : 400,
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              Group by Merchant {groupByMerchant ? '✓' : ''}
+            </button>
+          </div>
           <div style={{ marginBottom: '1rem', overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
               <thead>
                 <tr style={{ borderBottom: '2px solid var(--border-color)' }}>
                   <th style={{ padding: '0.75rem', textAlign: 'left', fontWeight: 600, color: 'var(--text-primary)' }}>Date</th>
-                  <th style={{ padding: '0.75rem', textAlign: 'left', fontWeight: 600, color: 'var(--text-primary)' }}>Description</th>
+                  <th style={{ padding: '0.75rem', textAlign: 'left', fontWeight: 600, color: 'var(--text-primary)' }}>
+                    {groupByMerchant ? 'Merchant' : 'Description'}
+                  </th>
                   <th style={{ padding: '0.75rem', textAlign: 'left', fontWeight: 600, color: 'var(--text-primary)' }}>Type</th>
+                  {groupByMerchant && (
+                    <th style={{ padding: '0.75rem', textAlign: 'right', fontWeight: 600, color: 'var(--text-primary)' }}>Count</th>
+                  )}
                   <th style={{ padding: '0.75rem', textAlign: 'right', fontWeight: 600, color: 'var(--text-primary)' }}>Amount</th>
                 </tr>
               </thead>
               <tbody>
-                {paginatedTransactions.map((transaction, idx) => (
-                  <tr
-                    key={idx}
-                    style={{
-                      borderBottom: '1px solid var(--border-color)',
-                      backgroundColor: idx % 2 === 0 ? 'transparent' : 'var(--bg-secondary)',
-                    }}
-                  >
-                    <td style={{ padding: '0.75rem', color: 'var(--text-primary)' }}>
-                      {formatDate(transaction.date)}
-                    </td>
-                    <td style={{ padding: '0.75rem', color: 'var(--text-primary)' }}>
-                      {transaction.description}
-                    </td>
-                    <td style={{ padding: '0.75rem', color: 'var(--text-secondary)' }}>
-                      {transaction.type}
-                    </td>
-                    <td
-                      style={{
-                        padding: '0.75rem',
-                        textAlign: 'right',
-                        fontWeight: 600,
-                        color: transaction.amount >= 0 ? 'var(--success-text)' : 'var(--error-text)',
-                      }}
-                    >
-                      {formatCurrency(transaction.amount)}
-                    </td>
-                  </tr>
-                ))}
+                {groupByMerchant
+                  ? paginatedMerchantGroups.map((group, idx) => (
+                      <tr
+                        key={`${group.merchant}-${idx}`}
+                        style={{
+                          borderBottom: '1px solid var(--border-color)',
+                          backgroundColor: idx % 2 === 0 ? 'transparent' : 'var(--bg-secondary)',
+                        }}
+                      >
+                        <td style={{ padding: '0.75rem', color: 'var(--text-primary)' }}>
+                          {group.minDate === group.maxDate
+                            ? formatDate(group.minDate)
+                            : `${formatDate(group.minDate)} → ${formatDate(group.maxDate)}`}
+                        </td>
+                        <td style={{ padding: '0.75rem', color: 'var(--text-primary)' }}>
+                          {group.merchant}
+                        </td>
+                        <td style={{ padding: '0.75rem', color: 'var(--text-secondary)' }}>
+                          {group.types.join(', ') || '—'}
+                        </td>
+                        <td style={{ padding: '0.75rem', textAlign: 'right', color: 'var(--text-primary)' }}>
+                          {group.count}
+                        </td>
+                        <td
+                          style={{
+                            padding: '0.75rem',
+                            textAlign: 'right',
+                            fontWeight: 600,
+                            color: group.amount >= 0 ? 'var(--success-text)' : 'var(--error-text)',
+                          }}
+                        >
+                          {formatCurrency(group.amount)}
+                        </td>
+                      </tr>
+                    ))
+                  : paginatedTransactions.map((transaction, idx) => (
+                      <tr
+                        key={idx}
+                        style={{
+                          borderBottom: '1px solid var(--border-color)',
+                          backgroundColor: idx % 2 === 0 ? 'transparent' : 'var(--bg-secondary)',
+                        }}
+                      >
+                        <td style={{ padding: '0.75rem', color: 'var(--text-primary)' }}>
+                          {formatDate(transaction.date)}
+                        </td>
+                        <td style={{ padding: '0.75rem', color: 'var(--text-primary)' }}>
+                          {transaction.description}
+                        </td>
+                        <td style={{ padding: '0.75rem', color: 'var(--text-secondary)' }}>
+                          {transaction.type}
+                        </td>
+                        <td
+                          style={{
+                            padding: '0.75rem',
+                            textAlign: 'right',
+                            fontWeight: 600,
+                            color: transaction.amount >= 0 ? 'var(--success-text)' : 'var(--error-text)',
+                          }}
+                        >
+                          {formatCurrency(transaction.amount)}
+                        </td>
+                      </tr>
+                    ))}
               </tbody>
             </table>
           </div>
@@ -402,13 +473,16 @@ export default function PNLFromCSV() {
 
       {/* Totals */}
       {filteredTransactions.length > 0 && (
-        <div style={{
-          marginTop: '2rem',
-          padding: '1.5rem',
-          backgroundColor: 'var(--bg-secondary)',
-          borderRadius: '16px',
-          border: '2px solid var(--border-color)',
-        }}>
+        <div
+          className="pnl-summary"
+          style={{
+            marginTop: '2rem',
+            padding: '1.5rem',
+            backgroundColor: 'var(--bg-secondary)',
+            borderRadius: '16px',
+            border: '2px solid var(--border-color)',
+          }}
+        >
           <h3 style={{ marginBottom: '0.5rem', fontSize: '1.3rem', color: 'var(--text-primary)' }}>
             Summary
           </h3>
@@ -455,6 +529,7 @@ export default function PNLFromCSV() {
             </div>
           </div>
           <button
+            className="copy-totals-btn"
             onClick={copyTotalsToClipboard}
             style={{
               marginTop: '1rem',

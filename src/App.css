@@ -537,3 +537,44 @@ label {
   padding-top: 0.5rem;
   border-top: 1px dashed var(--border-color);
 }
+
+@media print {
+  html,
+  body,
+  #root,
+  .sim-container {
+    display: block !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    position: static !important;
+  }
+
+  body::before {
+    display: none !important;
+  }
+
+  #root,
+  .sim-container {
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: none !important;
+    width: 100% !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+  }
+
+  nav,
+  .sim-container h2,
+  .csv-dropzone,
+  .copy-totals-btn {
+    display: none !important;
+  }
+
+  .pnl-summary {
+    break-before: page !important;
+    page-break-before: always !important;
+    break-inside: avoid !important;
+  }
+}
