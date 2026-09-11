@@ -254,6 +254,7 @@ export default function PNLFromCSV() {
 
       {/* File Dropzone */}
       <div
+        className="csv-dropzone"
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
@@ -472,13 +473,16 @@ export default function PNLFromCSV() {
 
       {/* Totals */}
       {filteredTransactions.length > 0 && (
-        <div style={{
-          marginTop: '2rem',
-          padding: '1.5rem',
-          backgroundColor: 'var(--bg-secondary)',
-          borderRadius: '16px',
-          border: '2px solid var(--border-color)',
-        }}>
+        <div
+          className="pnl-summary"
+          style={{
+            marginTop: '2rem',
+            padding: '1.5rem',
+            backgroundColor: 'var(--bg-secondary)',
+            borderRadius: '16px',
+            border: '2px solid var(--border-color)',
+          }}
+        >
           <h3 style={{ marginBottom: '0.5rem', fontSize: '1.3rem', color: 'var(--text-primary)' }}>
             Summary
           </h3>
@@ -525,6 +529,7 @@ export default function PNLFromCSV() {
             </div>
           </div>
           <button
+            className="copy-totals-btn"
             onClick={copyTotalsToClipboard}
             style={{
               marginTop: '1rem',
