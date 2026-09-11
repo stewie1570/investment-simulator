@@ -9,9 +9,22 @@ export interface MerchantGroup {
   maxDate: string;
 }
 
-export function merchantGroupKey(description: string): string {
+const UNKNOWN_MERCHANT = '(No description)';
+
+export function extractMerchantName(description: string): string {
   const normalized = description.trim().replace(/\s+/g, ' ');
-  return normalized ? normalized.toUpperCase() : '(NO DESCRIPTION)';
+  if (!normalized) return UNKNOWN_MERCHANT;
+
+  const specialIndex = normalized.search(/[^A-Za-z0-9\s]/);
+  const beforeSpecial = (specialIndex === -1 ? normalized : normalized.slice(0, specialIndex)).trim();
+  if (!beforeSpecial) return UNKNOWN_MERCHANT;
+
+  const twoWords = beforeSpecial.split(/\s+/).slice(0, 2).join(' ');
+  return twoWords || UNKNOWN_MERCHANT;
+}
+
+export function merchantGroupKey(description: string): string {
+  return extractMerchantName(description).toUpperCase();
 }
 
 function parseSortableDate(dateStr: string): number | null {
@@ -39,7 +52,7 @@ export function groupTransactionsByMerchant(transactions: CSVTransaction[]): Mer
 
     if (!existing) {
       groups.set(key, {
-        merchant: transaction.description.trim() || '(No description)',
+        merchant: extractMerchantName(transaction.description),
         count: 1,
         types: new Set(transaction.type ? [transaction.type] : []),
         amount: transaction.amount,
