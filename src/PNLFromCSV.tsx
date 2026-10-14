@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import './App.css';
-import { Link } from 'react-router-dom';
+import AppNav from './AppNav';
 import { parseCSV } from './csvParser';
 import type { CSVTransaction } from './types';
 import { groupTransactionsByMerchant } from './merchantGrouping';
@@ -242,14 +242,7 @@ export default function PNLFromCSV() {
 
   return (
     <div className="sim-container">
-      <nav style={{ marginBottom: '20px', paddingBottom: '10px', borderBottom: '1px solid #ccc' }}>
-        <Link to="/" style={{ marginRight: '20px', textDecoration: 'none', color: '#646cff' }}>
-          Trade Simulator
-        </Link>
-        <Link to="/pnl-from-csv" style={{ textDecoration: 'none', color: '#646cff' }}>
-          PNL From CSV
-        </Link>
-      </nav>
+      <AppNav />
       <h2>PNL From CSV</h2>
 
       {/* File Dropzone */}
