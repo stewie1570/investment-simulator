@@ -28,6 +28,7 @@ interface FormState {
   annualIncome: string;
   currentInvestments: string;
   contributionRate: string;
+  drawRate: string;
   annualReturn: string;
   annualInflation: string;
 }
@@ -53,12 +54,42 @@ const initialForm: FormState = {
   annualIncome: '120000',
   currentInvestments: '350000',
   contributionRate: '15',
+  drawRate: '4',
   annualReturn: '7',
   annualInflation: '3',
 };
 
+const FORM_STORAGE_KEY = 'retirement-calculator';
+
+function loadStoredForm(): FormState {
+  try {
+    const raw = localStorage.getItem(FORM_STORAGE_KEY);
+    if (!raw) return initialForm;
+    const stored = JSON.parse(raw) as Partial<FormState>;
+    const form = { ...initialForm };
+    (Object.keys(initialForm) as (keyof FormState)[]).forEach((key) => {
+      if (typeof stored?.[key] === 'string') form[key] = stored[key];
+    });
+    return form;
+  } catch {
+    return initialForm;
+  }
+}
+
+function storeForm(form: FormState) {
+  try {
+    localStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(form));
+  } catch {
+    // A full quota or blocked storage should leave the calculator usable.
+  }
+}
+
 export default function RetirementCalculator() {
-  const [form, setForm] = useState<FormState>(initialForm);
+  const [form, setForm] = useState<FormState>(loadStoredForm);
+
+  useEffect(() => {
+    storeForm(form);
+  }, [form]);
   const [todaysDollars, setTodaysDollars] = useState(false);
   const dark = useMediaQuery('(prefers-color-scheme: dark)');
   const narrow = useMediaQuery('(max-width: 768px)');
@@ -135,6 +166,13 @@ export default function RetirementCalculator() {
             name="contributionRate"
             value={form.contributionRate}
             onChange={update(setForm, 'contributionRate')}
+          />
+        </Field>
+        <Field label="Draw amount" hint="Percent of the portfolio withdrawn each year in retirement. The dollar amount changes as the balance changes.">
+          <PercentInput
+            name="drawRate"
+            value={form.drawRate}
+            onChange={update(setForm, 'drawRate')}
           />
         </Field>
         <Field label="Average rate of return" hint="Expected nominal growth of investments.">
@@ -312,8 +350,8 @@ export default function RetirementCalculator() {
             <p>
               Salary rises with inflation until retirement. Each year the contribution rate is
               invested, and monthly income while working is the remainder. At the retirement age,
-              work income and contributions stop. Draws start at that same spendable amount and
-              then rise with inflation, so purchasing power stays level. A draw cannot exceed the
+              work income and contributions stop. Each retirement draw is the draw amount times
+              the portfolio value at that time, so monthly income moves with the balance. A draw cannot exceed the
               investment balance, and the plan continues through age {MAX_PLAN_AGE}. Today’s dollars
               divides out inflation so every year is shown in current purchasing power.
             </p>
@@ -484,6 +522,11 @@ function parseForm(form: FormState): ParsedForm {
     return { ...empty, error: 'Enter a contribution rate from 0% to 100%.' };
   }
 
+  const drawRate = readNumber(form.drawRate);
+  if (drawRate === null || drawRate < 0 || drawRate > 100) {
+    return { ...empty, error: 'Enter a draw amount from 0% to 100%.' };
+  }
+
   const annualReturn = readNumber(form.annualReturn);
   if (annualReturn === null || annualReturn <= -100 || annualReturn > 100) {
     return { ...empty, error: 'Enter an average rate of return greater than -100% and at most 100%.' };
@@ -501,6 +544,7 @@ function parseForm(form: FormState): ParsedForm {
     annualIncome,
     currentInvestments,
     contributionRate: contributionRate / 100,
+    drawRate: drawRate / 100,
     annualReturn: annualReturn / 100,
     annualInflation: annualInflation / 100,
   });

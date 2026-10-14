@@ -11,6 +11,8 @@ export interface RetirementInputs {
   currentInvestments: number;
   /** Fraction of work income invested each year, from 0 to 1. */
   contributionRate: number;
+  /** Fraction of the portfolio withdrawn in the first retirement year, from 0 to 1. */
+  drawRate: number;
   /** Nominal annual growth rate of investments, e.g. 0.07 for 7%. */
   annualReturn: number;
   /** Annual inflation, e.g. 0.03 for 3%. */
@@ -56,25 +58,25 @@ export function toTodaysDollars(nominal: number, yearsFromNow: number, annualInf
  *
  * While working, salary rises with inflation and the contribution rate is
  * invested. Spendable income is the rest. Work and contributions stop at the
- * retirement age. Draws then replace that spendable income and themselves
- * rise with inflation. A draw is limited to the balance on hand, so the plan
- * can run out before 120.
+ * retirement age. Each retirement withdrawal is the draw rate times the
+ * portfolio value at that time, so the dollar amount changes as the balance
+ * changes. A draw cannot exceed the balance on hand.
  */
 export function projectRetirement(inputs: RetirementInputs): RetirementProjection {
   const currentAge = ageInYears(inputs.dateOfBirth, inputs.asOf);
   const contributionRate = clamp(inputs.contributionRate, 0, 1);
+  const drawRate = clamp(inputs.drawRate, 0, 1);
   const annualIncome = Math.max(0, inputs.annualIncome);
   const points: ProjectionPoint[] = [];
 
   let portfolio = Math.max(0, inputs.currentInvestments);
   let annualSalary = annualIncome;
   let retired = currentAge >= inputs.retirementAge - 1e-9;
-  let annualDraw = retired ? annualSalary * (1 - contributionRate) : 0;
   let depletedAtAge: number | null = null;
 
   const snapshot = (age: number) => {
     const yearsFromNow = Math.max(0, age - currentAge);
-    const desiredDraw = retired ? Math.max(0, annualDraw) / 12 : 0;
+    const desiredDraw = retired ? (portfolio * drawRate) / 12 : 0;
     const monthlyInvestmentIncome = retired ? Math.min(desiredDraw, portfolio) : 0;
     const monthlyWorkIncome = retired ? 0 : (annualSalary * (1 - contributionRate)) / 12;
     points.push({
@@ -113,7 +115,6 @@ export function projectRetirement(inputs: RetirementInputs): RetirementProjectio
       const workMonths = Math.max(0, (retirementAge - ageStart) * 12);
       applyWork(workMonths);
       retired = true;
-      annualDraw = annualSalary * (1 - contributionRate);
       pushIfNew(retirementAge);
       applyRetirement(step - workMonths, retirementAge);
     } else if (!retired) {
@@ -140,14 +141,13 @@ export function projectRetirement(inputs: RetirementInputs): RetirementProjectio
   function applyRetirement(months: number, ageAtStart: number) {
     if (months <= 1e-12) return;
     const years = months / 12;
-    const requested = Math.max(0, annualDraw) * years;
-    portfolio = Math.max(0, portfolio * growthFactor(inputs.annualReturn, years));
+    const requested = portfolio * drawRate * years;
     const actual = Math.min(requested, portfolio);
     const ranOut = requested > actual + 0.01;
     portfolio -= actual;
-    const fraction = requested === 0 ? 1 : actual / requested;
-    annualDraw *= growthFactor(inputs.annualInflation, years);
+    portfolio = Math.max(0, portfolio * growthFactor(inputs.annualReturn, years));
     if (ranOut && depletedAtAge === null) {
+      const fraction = requested === 0 ? 0 : actual / requested;
       depletedAtAge = ageAtStart + fraction * years;
       pushIfNew(depletedAtAge);
     }
