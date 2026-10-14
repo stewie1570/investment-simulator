@@ -1,0 +1,245 @@
+.retirement-page h2::before {
+  content: '🏖️';
+}
+
+.retirement-intro {
+  margin: -1rem 0 1.5rem;
+  color: var(--text-secondary);
+  max-width: 46rem;
+}
+
+.retirement-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.retirement-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.retirement-field .sim-input {
+  font-weight: 500;
+}
+
+.retirement-hint {
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 400;
+  line-height: 1.35;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.retirement-percent {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.retirement-percent .sim-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.retirement-percent-sign {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.retirement-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  margin: 0.5rem 0 1.25rem;
+}
+
+.retirement-toolbar-note {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  flex: 1 1 16rem;
+}
+
+.retirement-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  border: 2px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border-radius: 999px;
+  padding: 0.45rem 0.9rem 0.45rem 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.retirement-toggle.on {
+  border-color: #667eea;
+  box-shadow: var(--input-focus-shadow);
+}
+
+.retirement-toggle-track {
+  width: 2.4rem;
+  height: 1.35rem;
+  border-radius: 999px;
+  background: var(--disabled-bg);
+  position: relative;
+  transition: background 0.2s ease;
+}
+
+.retirement-toggle.on .retirement-toggle-track {
+  background: var(--accent-gradient);
+}
+
+.retirement-toggle-knob {
+  position: absolute;
+  top: 0.15rem;
+  left: 0.15rem;
+  width: 1.05rem;
+  height: 1.05rem;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.2s ease;
+}
+
+.retirement-toggle.on .retirement-toggle-knob {
+  transform: translateX(1.05rem);
+}
+
+.retirement-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.retirement-stat {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+}
+
+.retirement-stat-label {
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.retirement-stat-value {
+  color: var(--text-primary);
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-top: 0.2rem;
+}
+
+.retirement-chart-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 1rem 1rem 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.retirement-chart-card h3 {
+  margin: 0.25rem 0.5rem 0.5rem;
+  color: var(--text-primary);
+  font-size: 1.15rem;
+}
+
+.retirement-chart {
+  width: 100%;
+  height: 340px;
+}
+
+.retirement-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 0.25rem 0.5rem 0.35rem;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.retirement-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.swatch {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.swatch.work {
+  background: #764ba2;
+}
+
+.swatch.draws {
+  background: #10b981;
+}
+
+.retirement-tooltip {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 0.65rem 0.75rem;
+  box-shadow: var(--card-shadow);
+  min-width: 11rem;
+}
+
+.retirement-tooltip-age {
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.3rem;
+}
+
+.retirement-tooltip-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.retirement-tooltip-note {
+  margin-top: 0.35rem;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+}
+
+.retirement-assumptions {
+  margin-top: 0.5rem;
+  color: var(--text-secondary);
+}
+
+.retirement-assumptions summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.retirement-assumptions p {
+  margin: 0.6rem 0 0;
+  max-width: 48rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .retirement-chart {
+    height: 280px;
+  }
+}
